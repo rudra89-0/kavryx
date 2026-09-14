@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kavryx Dev — Autonomous Agentic AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #040810;
+      --card-bg: rgba(13, 19, 32, 0.72);
+      --card-border: rgba(255, 255, 255, 0.14);
+      --text-white: #ffffff;
+      --text-dim: #94a3b8;
+      --accent-crimson: #ff2a44;
+      --accent-glow: rgba(255, 42, 68, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-white);
+      overflow-x: hidden;
+      perspective: 1200px;
+    }
+
+    /* Fullscreen Fixed WebGL 3D Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Fixed Glass Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .brand-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .nav-pill {
+      display: flex;
+      gap: 2rem;
+      background: rgba(18, 26, 42, 0.65);
+      border: 1px solid var(--card-border);
+      padding: 0.65rem 2rem;
+      border-radius: 9999px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-pill a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-pill a:hover {
+      color: #fff;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-login {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn-white {
+      background: #ffffff;
+      color: #040810;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-white:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 25px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Scroll Container & 3D Stage Setup */
+    .scroll-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 8% 6rem 8%;
+      transform-style: preserve-3d;
+    }
+
+    /* SECTION 1: HERO (Spatial Split) */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .hero-text {
+      max-width: 600px;
+      transform: translateZ(40px);
+    }
+
+    .hero-text h1 {
+      font-size: clamp(2.8rem, 4.6vw, 4.4rem);
+      line-height: 1.05;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.6rem;
+      text-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
+    }
+
+    .hero-text p {
+      color: var(--text-dim);
+      font-size: 1.15rem;
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 2.4rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .btn-action-primary {
+      background: #ffffff;
+      color: #040810;
+      padding: 0.9rem 2.2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+
+    .btn-action-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn-action-secondary {
+      background: rgba(22, 28, 42, 0.65);
+      color: #ffffff;
+      padding: 0.9rem 2.2rem;
+      border-radius: 9999px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: all 0.2s;
+    }
+
+    .btn-action-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Interactive 3D Holographic Glass Card */
+    .card-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      perspective: 1200px;
+      transform-style: preserve-3d;
+    }
+
+    .glass-card {
+      width: 100%;
+      max-width: 460px;
+      min-height: 330px;
+      background: linear-gradient(135deg, rgba(20, 28, 44, 0.72) 0%, rgba(10, 15, 24, 0.85) 100%);
+      backdrop-filter: blur(36px);
+      -webkit-backdrop-filter: blur(36px);
+      border: 1px solid var(--card-border);
+      border-radius: 26px;
+      padding: 2.4rem;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+      transform-style: preserve-3d;
+      transform: rotateY(-10deg) rotateX(6deg) translateZ(50px);
+      transition: transform 0.15s ease-out, opacity 0.3s;
+    }
+
+    .glass-card .card-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      transform: translateZ(25px);
+    }
+
+    .glass-card .card-metric {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 0.9rem;
+      margin-bottom: 1.8rem;
+      transform: translateZ(35px);
+    }
+
+    .glass-card .card-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.15);
+      padding: 0.25rem 0.7rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 100px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 12px;
+      transform: translateZ(30px);
+    }
+
+    .bar {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar.active {
+      background: #ffffff;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.85);
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.7rem;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.45);
+      transform: translateZ(20px);
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 8px;
+      margin-top: 1.4rem;
+      transform: translateZ(25px);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 50%;
+    }
+
+    .dot.active {
+      background: #ffffff;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 2.2rem;
+      display: flex;
+      gap: 6px;
+      transform: translateZ(30px);
+    }
+
+    .indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      transition: all 0.3s;
+    }
+
+    .indicator.active {
+      background: #ffffff;
+      width: 18px;
+      border-radius: 4px;
+    }
+
+    /* SECTION 2: ARCHITECTURE RUNTIME */
+    .features-section {
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-crimson);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      background: rgba(255, 42, 68, 0.12);
+      border: 1px solid rgba(255, 42, 68, 0.35);
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      display: inline-block;
+      transform: translateZ(20px);
+    }
+
+    .section-title {
+      font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+      letter-spacing: -0.035em;
+      margin-bottom: 1.2rem;
+      transform: translateZ(30px);
+    }
+
+    .section-subtitle {
+      color: var(--text-dim);
+      font-size: 1.15rem;
+      max-width: 640px;
+      margin-bottom: 3.5rem;
+      transform: translateZ(25px);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.2rem;
+      width: 100%;
+      perspective: 1000px;
+    }
+
+    .feature-box {
+      background: linear-gradient(135deg, rgba(20, 28, 42, 0.7) 0%, rgba(10, 14, 22, 0.8) 100%);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      padding: 2.6rem;
+      border-radius: 22px;
+      transform-style: preserve-3d;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-8px) translateZ(20px);
+      border-color: rgba(255, 42, 68, 0.55);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .feature-box h3 {
+      font-size: 1.45rem;
+      margin-bottom: 0.9rem;
+      transform: translateZ(20px);
+    }
+
+    .feature-box p {
+      color: var(--text-dim);
+      font-size: 0.98rem;
+      line-height: 1.65;
+      transform: translateZ(10px);
+    }
+
+    /* SECTION 3: LIVE REASONING TERMINAL */
+    .terminal-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4.5rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .terminal-card {
+      background: rgba(8, 12, 20, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 2.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      box-shadow: 0 35px 75px rgba(0, 0, 0, 0.8);
+      transform-style: preserve-3d;
+      transform: translateZ(30px);
+    }
+
+    .terminal-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .term-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .term-code {
+      color: #38bdf8;
+      line-height: 1.75;
+    }
+
+    .term-code span.key {
+      color: #f43f5e;
+    }
+
+    .term-code span.val {
+      color: #34d399;
+    }
+
+    .term-code span.comment {
+      color: #64748b;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3.5rem 8%;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+      }
+
+      .terminal-section {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        padding: 1.5rem 2rem;
+      }
+
+      section {
+        padding: 7rem 2rem 4rem 2rem;
+      }
+
+      footer {
+        padding: 3rem 2rem;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+    }
+
+    /* ===== Modal System (Auth + Book a Demo) ===== */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(2, 5, 12, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      background: linear-gradient(150deg, rgba(20, 28, 44, 0.92) 0%, rgba(9, 14, 24, 0.96) 100%);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 2.2rem;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .modal .modal-sub {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .form-field {
+      margin-bottom: 1rem;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      width: 100%;
+      background: rgba(5, 9, 18, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-field textarea {
+      resize: vertical;
+      min-height: 88px;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+      border-color: rgba(255, 42, 68, 0.6);
+      box-shadow: 0 0 0 3px rgba(255, 42, 68, 0.15);
+    }
+
+    .form-field select option {
+      background: #0b1220;
+      color: #fff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #ffffff;
+      color: #040810;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      margin-top: 0.4rem;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-error {
+      display: none;
+      background: rgba(255, 42, 68, 0.12);
+      border: 1px solid rgba(255, 42, 68, 0.4);
+      color: #ff8292;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .form-error.show {
+      display: block;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem 0.5rem;
+    }
+
+    .form-success.show {
+      display: block;
+    }
+
+    .form-success .tick {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.1rem;
+      font-size: 1.5rem;
+      color: #34d399;
+    }
+
+    .modal-footer-switch {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 1.2rem;
+    }
+
+    .modal-footer-switch a {
+      color: #ff5c6e;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .modal-close-x {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close-x:hover {
+      color: #fff;
+    }
+
+    .modal {
+      position: relative;
+    }
+
+    .nav-user {
+      display: none;
+      align-items: center;
+      gap: 0.7rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 0.45rem 0.6rem 0.45rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+    }
+
+    .nav-user.show {
+      display: flex;
+    }
+
+    .nav-user .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff2a44, #b91c3c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: #fff;
+    }
+
+    .nav-user .btn-logout {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-user .btn-logout:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .admin-link-pill {
+      display: none;
+      color: #34d399;
+      font-size: 0.8rem;
+      text-decoration: none;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+    }
+
+    .admin-link-pill.show {
+      display: inline-block;
+    }
+  </style>
+
+  <!-- Three.js Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Visible JS error banner: if any script fails, this shows exactly why -->
+  <script>
+    window.__jsErrors = [];
+    window.onerror = function (msg, src, line, col) {
+      window.__jsErrors.push(msg + ' (line ' + line + ')');
+      var b = document.getElementById('js-error-banner');
+      if (!b) {
+        b = document.createElement('div');
+        b.id = 'js-error-banner';
+        b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#7f1d1d;color:#fff;padding:10px 16px;font:13px monospace;white-space:pre-wrap;';
+        (document.body || document.documentElement).appendChild(b);
+        b.textContent = '⚠ JS errors detected:\n';
+      }
+      b.textContent += '• ' + msg + ' (line ' + line + ')\n';
+    };
+  </script>
+
+  <!-- Three.js 3D Volumetric Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand">
+      <div class="brand-icon">
+        <img src="/assets/logo.png" alt="Kavryx Dev Logo" />
+      </div>
+      <span>Kavryx Dev</span>
+    </div>
+
+    <div class="nav-pill">
+      <a href="#hero">Platform</a>
+      <a href="#features">Architecture</a>
+      <a href="#terminal">Terminal</a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="/admin.html" class="admin-link-pill" id="admin-link">Admin</a>
+      <div class="nav-user" id="nav-user">
+        <span class="avatar" id="nav-avatar">?</span>
+        <span id="nav-name">User</span>
+        <button class="btn-logout" id="btn-logout">Logout</button>
+      </div>
+      <button class="btn-login" id="btn-login">Login</button>
+      <button class="btn-white" id="btn-signup">Sign up</button>
+      <button class="btn-white" data-open-demo>Book a demo</button>
+    </div>
+  </nav>
+
+  <!-- Fallback: open auth modal even if the main script failed -->
+  <script>
+    (function () {
+      function showAuthModal(which) {
+        var loginView = document.getElementById('auth-login-view');
+        var regView = document.getElementById('auth-register-view');
+        var backdrop = document.getElementById('modal-backdrop');
+        if (!backdrop) return;
+        if (which === 'register' && loginView && regView) {
+          loginView.style.display = 'none';
+          regView.style.display = '';
+        }
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function bind() {
+        var su = document.getElementById('btn-signup');
+        if (su) su.addEventListener('click', function () { showAuthModal('register'); });
+        var li = document.getElementById('btn-login');
+        if (li) li.addEventListener('click', function () { showAuthModal('login'); });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bind);
+      } else {
+        bind();
+      }
+    })();
+  </script>
+
+  <!-- Continuous 3D Spatial Scroll Tracks -->
+  <div class="scroll-container">
+
+    <!-- Section 1: Hero -->
+    <section class="hero-section" id="hero">
+      <div class="hero-text">
+        <h1>Elevate your essential data to new heights</h1>
+        <p>Advanced reasoning systems and predictive models built for high-dimensional decision spaces.</p>
+        <div class="hero-buttons">
+          <button class="btn-action-primary" data-open-demo>Book a demo</button>
+          <button class="btn-action-secondary" data-open-contact>Talk with the team</button>
+        </div>
+      </div>
+
+      <div class="card-wrapper">
+        <div class="glass-card" id="metrics-card">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Architecture Features -->
+    <section class="features-section" id="features">
+      <div class="section-tag">Autonomous Core</div>
+      <h2 class="section-title">Built for deterministic intelligence</h2>
+      <p class="section-subtitle">Multi-agent orchestrators engineered to execute transactions and reasoning loops with
+        zero drift.</p>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h3 style="color: #ff4d5a;">01 // Swarm Coordination</h3>
+          <p>Dynamically partitions high-level prompts into granular micro-tasks assigned across autonomous specialized
+            agent nodes.</p>
+        </div>
+        <div class="feature-box">
+          <h3 style="color: #38bdf8;">02 // Predictive Sandboxing</h3>
+          <p>Every tool execution and API dispatch is pre-simulated in isolated runtime containers to verify zero
+            edge-case violations.</p>
+        </div>
+        <div class="feature-box">
+          <h3 style="color: #34d399;">03 // Continuous Memory Vector</h3>
+          <p>Persistent state indexing allowing agent networks to retain institutional knowledge across months of
+            workflow cycles.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Protocol Terminal -->
+    <section id="terminal">
+      <div class="terminal-section">
+        <div>
+          <div class="section-tag">Direct Protocol Access</div>
+          <h2 class="section-title">Sub-millisecond Agentic Telemetry</h2>
+          <p class="section-subtitle">Connect your data lake directly into our reasoning spine using high-performance
+            WebSockets and gRPC.</p>
+          <button class="btn-action-primary" style="margin-top: 1.2rem;">Explore Documentation &rarr;</button>
+        </div>
+
+        <div class="terminal-card">
+          <div class="terminal-header">
+            <div class="term-dot" style="background: #ef4444;"></div>
+            <div class="term-dot" style="background: #eab308;"></div>
+            <div class="term-dot" style="background: #22c55e;"></div>
+          </div>
+          <div class="term-code">
+            <span class="comment">// Kavryx Dev Autonomous Orchestration</span><br>
+            <span class="key">import</span> { AgentSwarm, ReasoningCore } <span class="key">from</span> <span
+              class="val">'@kavryx/dev'</span>;<br><br>
+            <span class="key">const</span> node = <span class="key">new</span> ReasoningCore({<br>
+            &nbsp;&nbsp;cluster: <span class="val">'node-us-east-4'</span>,<br>
+            &nbsp;&nbsp;consensus: <span class="val">'deterministic'</span>,<br>
+            &nbsp;&nbsp;activeAgents: <span class="val">142</span><br>
+            });<br><br>
+            <span class="key">await</span> node.dispatch(<span class="val">'EXECUTE_AUTONOMOUS_CYCLE'</span>);<br>
+            <span class="comment">> System status: [CONNECTED - 0.04ms LATENCY]</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>&copy; 2026 KAVRYX DEV. All Rights Reserved.</div>
+      <div>CORE STATUS: 3D ENGINE ONLINE // TELEMETRY OK // UI v2.1</div>
+    </footer>
+
+  </div>
+
+  <!-- ===== Auth / Book-a-demo Modal ===== -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close-x" id="modal-close" aria-label="Close">&times;</button>
+
+      <!-- Login/Register view -->
+      <div id="view-auth">
+        <div id="auth-login-view">
+          <h2>Welcome back</h2>
+          <p class="modal-sub">Log in to your Kavryx Dev account.</p>
+          <div class="form-error" id="login-error"></div>
+          <form id="login-form">
+            <div class="form-field">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required autocomplete="email" placeholder="you@company.com">
+            </div>
+            <div class="form-field">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required autocomplete="current-password"
+                placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-submit" id="login-submit">Log in</button>
+          </form>
+          <div class="modal-footer-switch">
+            No account? <a id="switch-to-register"><strong>Create one</strong></a>
+          </div>
+        </div>
+
+        <div id="auth-register-view" style="display:none">
+          <h2>Create account</h2>
+          <p class="modal-sub">Join Kavryx Dev to get started.</p>
+          <div class="form-error" id="register-error"></div>
+          <form id="register-form">
+            <div class="form-field">
+              <label for="reg-name">Full name</label>
+              <input type="text" id="reg-name" required autocomplete="name" placeholder="Ada Lovelace">
+            </div>
+            <div class="form-field">
+              <label for="reg-email">Work email</label>
+              <input type="email" id="reg-email" required autocomplete="email" placeholder="you@company.com">
+            </div>
+            <div class="form-field">
+              <label for="reg-company">Company (optional)</label>
+              <input type="text" id="reg-company" autocomplete="organization" placeholder="Acme Corp">
+            </div>
+            <div class="form-field">
+              <label for="reg-password">Password</label>
+              <input type="password" id="reg-password" required minlength="8" autocomplete="new-password"
+                placeholder="Min. 8 characters">
+            </div>
+            <button type="submit" class="btn-submit" id="register-submit">Create account</button>
+          </form>
+          <div class="modal-footer-switch">
+            Already registered? <a id="switch-to-login">Log in</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Book a demo view -->
+      <div id="view-demo" style="display:none">
+        <h2>Book a demo</h2>
+        <p class="modal-sub">See the Kavryx reasoning spine in action.</p>
+        <div class="form-error" id="demo-error"></div>
+        <form id="demo-form">
+          <div class="form-field">
+            <label for="demo-name">Full name</label>
+            <input type="text" id="demo-name" required placeholder="Ada Lovelace">
+          </div>
+          <div class="form-field">
+            <label for="demo-email">Work email</label>
+            <input type="email" id="demo-email" required placeholder="you@company.com">
+          </div>
+          <div class="form-field">
+            <label for="demo-company">Company</label>
+            <input type="text" id="demo-company" placeholder="Acme Corp">
+          </div>
+          <div class="form-field">
+            <label for="demo-team">Team size</label>
+            <select id="demo-team">
+              <option value="">Select…</option>
+              <option>1–10</option>
+              <option>11–50</option>
+              <option>51–200</option>
+              <option>200+</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="demo-msg">What do you want to see? (optional)</label>
+            <textarea id="demo-msg" placeholder="Use cases, integrations, compliance needs…"></textarea>
+          </div>
+          <button type="submit" class="btn-submit" id="demo-submit">Request demo</button>
+        </form>
+        <div class="form-success" id="demo-success">
+          <div class="tick">✓</div>
+          <h2>Request received</h2>
+          <p class="modal-sub">Our team will reach out within one business day.</p>
+          <button class="btn-submit" onclick="closeModal()">Done</button>
+        </div>
+      </div>
+
+      <!-- Contact view -->
+      <div id="view-contact" style="display:none">
+        <h2>Talk with the team</h2>
+        <p class="modal-sub">Questions about architecture, pricing, or integrations?</p>
+        <div class="form-error" id="contact-error"></div>
+        <form id="contact-form">
+          <div class="form-field">
+            <label for="contact-name">Full name</label>
+            <input type="text" id="contact-name" required placeholder="Ada Lovelace">
+          </div>
+          <div class="form-field">
+            <label for="contact-email">Email</label>
+            <input type="email" id="contact-email" required placeholder="you@company.com">
+          </div>
+          <div class="form-field">
+            <label for="contact-msg">Message</label>
+            <textarea id="contact-msg" required placeholder="Tell us what you're building…"></textarea>
+          </div>
+          <button type="submit" class="btn-submit" id="contact-submit">Send message</button>
+        </form>
+        <div class="form-success" id="contact-success">
+          <div class="tick">✓</div>
+          <h2>Message sent</h2>
+          <p class="modal-sub">We'll get back to you shortly.</p>
+          <button class="btn-submit" onclick="closeModal()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 0. Backend API helpers & UI wiring ---
+    const API = {
+      async get(url) {
+        const r = await fetch(url, { credentials: 'same-origin' });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || 'Request failed');
+        return data;
+      },
+      async post(url, body, method = 'POST') {
+        const r = await fetch(url, {
+          method,
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || 'Request failed');
+        return data;
+      },
+    };
+
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const views = {
+      auth: document.getElementById('view-auth'),
+      demo: document.getElementById('view-demo'),
+      contact: document.getElementById('view-contact'),
+    };
+
+    function openModal(view) {
+      Object.entries(views).forEach(([k, el]) => el.style.display = k === view ? '' : 'none');
+      modalBackdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove('open');
+      document.body.style.overflow = '';
+      // Reset forms + success states after close
+      setTimeout(() => {
+        ['demo-form', 'contact-form'].forEach(id => {
+          const f = document.getElementById(id);
+          if (f) { f.reset(); f.style.display = ''; }
+        });
+        ['demo-success', 'contact-success'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('show');
+        });
+      }, 300);
+    }
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    document.querySelectorAll('[data-open-demo]').forEach(b =>
+      b.addEventListener('click', () => openModal('demo')));
+    document.querySelectorAll('[data-open-contact]').forEach(b =>
+      b.addEventListener('click', () => openModal('contact')));
+
+    // --- Login / Register ---
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const navUser = document.getElementById('nav-user');
+    const navName = document.getElementById('nav-name');
+    const navAvatar = document.getElementById('nav-avatar');
+    const adminLink = document.getElementById('admin-link');
+
+    function showFormError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    function hideFormError(id) {
+      document.getElementById(id).classList.remove('show');
+      document.getElementById(id).textContent = '';
+    }
+
+    function applyUserState(user) {
+      if (user) {
+        btnLogin.style.display = 'none';
+        navUser.classList.add('show');
+        navName.textContent = user.name.split(' ')[0];
+        navAvatar.textContent = user.name.trim().charAt(0).toUpperCase();
+        adminLink.classList.toggle('show', user.role === 'admin');
+      } else {
+        btnLogin.style.display = '';
+        navUser.classList.remove('show');
+        adminLink.classList.remove('show');
+      }
+    }
+
+    btnLogin.addEventListener('click', () => {
+      // Always open the login form; the register form resets to hidden
+      document.getElementById('auth-login-view').style.display = '';
+      document.getElementById('auth-register-view').style.display = 'none';
+      openModal('auth');
+    });
+
+    const btnSignup = document.getElementById('btn-signup');
+    btnSignup.addEventListener('click', () => {
+      document.getElementById('auth-login-view').style.display = 'none';
+      document.getElementById('auth-register-view').style.display = '';
+      openModal('auth');
+    });
+    btnLogout.addEventListener('click', async () => {
+      try { await API.post('/api/auth/logout'); } catch (_) { }
+      applyUserState(null);
+    });
+
+    document.getElementById('switch-to-register').addEventListener('click', () => {
+      document.getElementById('auth-login-view').style.display = 'none';
+      document.getElementById('auth-register-view').style.display = '';
+    });
+
+    document.getElementById('switch-to-login').addEventListener('click', () => {
+      document.getElementById('auth-register-view').style.display = 'none';
+      document.getElementById('auth-login-view').style.display = '';
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFormError('login-error');
+      const btn = document.getElementById('login-submit');
+      btn.disabled = true; btn.textContent = 'Logging in…';
+      try {
+        const data = await API.post('/api/auth/login', {
+          email: document.getElementById('login-email').value,
+          password: document.getElementById('login-password').value,
+        });
+        applyUserState(data.user);
+        closeModal();
+      } catch (err) {
+        showFormError('login-error', err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Log in';
+      }
+    });
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFormError('register-error');
+      const btn = document.getElementById('register-submit');
+      btn.disabled = true; btn.textContent = 'Creating…';
+      try {
+        const data = await API.post('/api/auth/register', {
+          name: document.getElementById('reg-name').value,
+          email: document.getElementById('reg-email').value,
+          company: document.getElementById('reg-company').value,
+          password: document.getElementById('reg-password').value,
+        });
+        applyUserState(data.user);
+        closeModal();
+      } catch (err) {
+        showFormError('register-error', err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Create account';
+      }
+    });
+
+    // --- Book a demo ---
+    document.getElementById('demo-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFormError('demo-error');
+      const btn = document.getElementById('demo-submit');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await API.post('/api/demo-requests', {
+          name: document.getElementById('demo-name').value,
+          email: document.getElementById('demo-email').value,
+          company: document.getElementById('demo-company').value,
+          teamSize: document.getElementById('demo-team').value,
+          message: document.getElementById('demo-msg').value,
+        });
+        document.getElementById('demo-form').style.display = 'none';
+        document.getElementById('demo-success').classList.add('show');
+      } catch (err) {
+        showFormError('demo-error', err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Request demo';
+      }
+    });
+
+    // --- Contact form ---
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFormError('contact-error');
+      const btn = document.getElementById('contact-submit');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await API.post('/api/contact', {
+          name: document.getElementById('contact-name').value,
+          email: document.getElementById('contact-email').value,
+          message: document.getElementById('contact-msg').value,
+        });
+        document.getElementById('contact-form').style.display = 'none';
+        document.getElementById('contact-success').classList.add('show');
+        document.getElementById('contact-error').classList.remove('show');
+      } catch (err) {
+        showFormError('contact-error', err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Send message';
+      }
+    });
+
+    // Pre-fill forms for logged-in users + load session on page load
+    (async () => {
+      try {
+        const { user } = await API.get('/api/auth/me');
+        applyUserState(user);
+        if (user) {
+          document.getElementById('demo-name').value = user.name;
+          document.getElementById('demo-email').value = user.email;
+          if (user.company) document.getElementById('demo-company').value = user.company;
+          document.getElementById('contact-name').value = user.name;
+          document.getElementById('contact-email').value = user.email;
+        }
+      } catch (_) { /* not logged in */ }
+    })();
+
+    // --- 1. Three.js Volumetric 3D Scene Initialization ---
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x040810, 0.038);
+
+    const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2.2, 11);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x0f172a, 3.0);
+    scene.add(ambientLight);
+
+    const coreLight = new THREE.PointLight(0xffaa00, 16, 45); // Gold core
+    coreLight.position.set(0, 0.8, -1.8);
+    scene.add(coreLight);
+
+    const blueRim = new THREE.DirectionalLight(0x00c3ff, 1.5); // Cyan rim
+    blueRim.position.set(10, 8, -12);
+    scene.add(blueRim);
+
+    // 3D Procedural Ocean Terrain (Cyber Grid)
+    const planeGeo = new THREE.PlaneGeometry(90, 90, 180, 180);
+    planeGeo.rotateX(-Math.PI / 2);
+
+    const pos = planeGeo.attributes.position;
+    const initialY = new Float32Array(pos.count);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+      const y = Math.sin(x * 0.35) * Math.cos(z * 0.35) * 1.2 +
+        Math.sin(x * 0.85 + z * 0.5) * 0.45;
+      pos.setY(i, y);
+      initialY[i] = y;
+    }
+    planeGeo.computeVertexNormals();
+
+    const planeMat = new THREE.MeshStandardMaterial({
+      color: 0x060c18,
+      emissive: 0x001133,
+      roughness: 0.1,
+      metalness: 0.9,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    const terrain = new THREE.Mesh(planeGeo, planeMat);
+    terrain.position.set(0, -2.4, -6);
+    scene.add(terrain);
+
+    // 3D Glowing Cyber Beam
+    const beamGeo = new THREE.CylinderGeometry(0.08, 0.4, 50, 32, 1, true);
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: 0x00f3ff,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.position.set(0, 12, -2);
+    scene.add(beam);
+
+    const glowGeo = new THREE.CylinderGeometry(0.6, 3.2, 50, 32, 1, true);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: 0x0088ff,
+      transparent: true,
+      opacity: 0.25,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const halo = new THREE.Mesh(glowGeo, glowMat);
+    halo.position.copy(beam.position);
+    scene.add(halo);
+
+    // Dynamic Circuit Ring
+    const ringGeo = new THREE.TorusGeometry(1.6, 0.05, 16, 64);
+    ringGeo.rotateX(Math.PI / 2);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xffaa00,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    const laserRing = new THREE.Mesh(ringGeo, ringMat);
+    laserRing.position.set(0, -1.6, -2);
+    scene.add(laserRing);
+
+    // Volumetric 3D Data Particles
+    const particleCount = 1200;
+    const particleGeo = new THREE.BufferGeometry();
+    const particleCoords = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      particleCoords[i] = (Math.random() - 0.5) * 35;
+      particleCoords[i + 1] = Math.random() * 16 - 2;
+      particleCoords[i + 2] = (Math.random() - 0.5) * 30;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particleCoords, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xffd700, // Gold particles
+      size: 0.07,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // --- 2. Real-time Scroll & Mouse Depth Interaction ---
+    let scrollProgress = 0;
+    let mouseX = 0, mouseY = 0;
+
+    window.addEventListener('scroll', () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+    });
+
+    const card = document.getElementById('metrics-card');
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      // Realistic 3D Tilt calculation on card
+      if (card) {
+        const tiltX = -mouseY * 18;
+        const tiltY = mouseX * 18 - 10;
+        card.style.transform = `rotateY(${tiltY}deg) rotateX(${tiltX}deg) translateZ(50px)`;
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- 3. Animation Loop (Continuous Depth Scrubbing) ---
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      // Terrain wave dynamics
+      const posArr = terrain.geometry.attributes.position;
+      for (let i = 0; i < posArr.count; i++) {
+        const u = posArr.getX(i);
+        const v = posArr.getZ(i);
+        posArr.setY(i, initialY[i] + Math.sin(t * 1.8 + u * 0.5 + v * 0.4) * 0.4);
+      }
+      terrain.geometry.attributes.position.needsUpdate = true;
+
+      // Pulse beacon
+      const pulse = 1 + Math.sin(t * 5) * 0.08;
+      beam.scale.set(pulse, 1, pulse);
+      halo.scale.set(pulse * 1.1, 1, pulse * 1.1);
+
+      // Shockwave loop
+      laserRing.scale.set(1 + (t % 2) * 1.6, 1 + (t % 2) * 1.6, 1);
+      laserRing.material.opacity = Math.max(0, 0.8 - ((t % 2) / 2));
+
+      // Volumetric ember traversal
+      const pArr = particles.geometry.attributes.position.array;
+      for (let i = 1; i < particleCount * 3; i += 3) {
+        pArr[i] += 0.025;
+        if (pArr[i] > 14) pArr[i] = -2;
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+
+      // Continuous 3D Spatial Traversal (The Dive)
+      const targetZ = 11 - (scrollProgress * 8.5);
+      const targetY = 2.2 - (scrollProgress * 1.8);
+      const targetX = (mouseX * 0.6) + (Math.sin(scrollProgress * Math.PI) * 2.5);
+
+      camera.position.z += (targetZ - camera.position.z) * 0.06;
+      camera.position.y += (targetY - camera.position.y) * 0.06;
+      camera.position.x += (targetX - camera.position.x) * 0.06;
+
+      // Focal tracking adjusts along the Z-plane
+      camera.lookAt(0, 1.2 - (scrollProgress * 1.5), -2);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // --- 4. Dynamic Metric Card State Machine ---
+    const slides = [
+      {
+        subtitle: "Revenue Growth",
+        metric: "$14,205,890.00",
+        badge: "+32.4% vs previous",
+        type: "bar",
+        bars: [30, 45, 25, 60, 40, 75, 50, 95, 65, 80, 45, 90, 70, 85, 60, 100],
+        labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "Now"]
+      },
+      {
+        subtitle: "Sales Trend",
+        metric: "$4.9M",
+        badge: "Win Rate 85%",
+        type: "grouped-bar",
+        bars: [45, 70, 60, 85, 100],
+        labels: ["Q1", "Q2", "Q3", "Q4", "Current"]
+      },
+      {
+        subtitle: "Lead Performance",
+        metric: "84,392",
+        badge: "AI-Qualified 94.2%",
+        type: "matrix",
+        dots: 48
+      }
+    ];
+
+    let currentSlide = 0;
+    function renderSlide(index) {
+      const data = slides[index];
+      let html = `
+        <div class="card-subtitle">${data.subtitle}</div>
+        <div class="card-metric">
+          ${data.metric}
+          <span class="card-tag">${data.badge}</span>
+        </div>
+      `;
+
+      if (data.type === "bar") {
+        html += `
+          <div class="bar-chart">
+            ${data.bars.map((h, i) => `<div class="bar ${i === 11 ? 'active' : ''}" style="height: ${h}%;"></div>`).join('')}
+          </div>
+          <div class="chart-labels">
+            ${data.labels.map(l => `<span>${l}</span>`).join('')}
+          </div>
+        `;
+      } else if (data.type === "grouped-bar") {
+        html += `
+          <div class="bar-chart" style="gap: 20px; justify-content: space-around;">
+            ${data.bars.map((h, i) => `<div class="bar ${i === 4 ? 'active' : ''}" style="height: ${h}%; width: 28px;"></div>`).join('')}
+          </div>
+          <div class="chart-labels" style="justify-content: space-around;">
+            ${data.labels.map(l => `<span>${l}</span>`).join('')}
+          </div>
+        `;
+      } else if (data.type === "matrix") {
+        html += `
+          <div class="matrix-grid">
+            ${Array.from({ length: data.dots }).map((_, i) => `<div class="dot ${(i % 3 === 0 || i % 7 === 0) ? 'active' : ''}"></div>`).join('')}
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="carousel-indicators">
+          ${slides.map((_, i) => `<div class="indicator ${i === index ? 'active' : ''}"></div>`).join('')}
+        </div>
+      `;
+
+      card.innerHTML = html;
+    }
+
+    renderSlide(0);
+    setInterval(() => {
+      card.style.opacity = '0';
+      setTimeout(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        renderSlide(currentSlide);
+        card.style.opacity = '1';
+      }, 300);
+    }, 3800);
+  </script>
+</body>
+
+</html>
