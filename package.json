@@ -4,6 +4,7 @@
   "description": "Backend for Kavryx Dev — auth, demo booking, contact, admin dashboard",
   "main": "server.js",
   "scripts": {
+    "build": "echo Build ready",
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
